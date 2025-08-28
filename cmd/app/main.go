@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/crewcrew23/sysnap/internal/startup"
 	"github.com/urfave/cli/v3"
 )
 
@@ -36,25 +37,32 @@ func main() {
 				Usage:   "path for output file",
 				Value:   "sysnap-result.json",
 			},
+			&cli.Int64Flag{
+				Name:    "duration",
+				Aliases: []string{"d"},
+				Usage:   "duration for once snapshot",
+				Value:   5,
+			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			once := cmd.Bool("once")
 			interval := cmd.Int64("interval")
+			duration := cmd.Int64("duration")
 			workTime := cmd.Int64("work-time")
 			output := cmd.String("output")
+
 			fmt.Println("Once", once)
 			fmt.Println("interval", interval)
+			fmt.Println("duration", duration)
 			fmt.Println("workTime", workTime)
 			fmt.Println("output", output)
-			return nil
+
+			err := startup.RunOnce(output, duration)
+			return err
 		},
 	}
 
 	if err := cmd.Run(context.Background(), os.Args); err != nil {
 		log.Fatal(cmd)
 	}
-}
-
-func run() error {
-	return nil
 }

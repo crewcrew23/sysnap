@@ -1,4 +1,4 @@
-package fields
+package options
 
 type Fields struct {
 	Once     bool
