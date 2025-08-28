@@ -23,8 +23,6 @@ func coreLoad(t1, t2 *cpu.TimesStat) float64 {
 }
 
 func CpuLoad(duration int64) ([]float64, error) {
-	var usage []float64
-
 	t1, err := cpu.Times(true)
 	if err != nil {
 		return nil, err
@@ -37,8 +35,10 @@ func CpuLoad(duration int64) ([]float64, error) {
 		return nil, err
 	}
 
+	usage := make([]float64, len(t1))
+
 	for i := range len(t1) {
-		usage = append(usage, coreLoad(&t1[i], &t2[i]))
+		usage[i] = coreLoad(&t1[i], &t2[i])
 	}
 
 	return usage, nil

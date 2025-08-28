@@ -1,8 +1,6 @@
 package result
 
-import (
-	"github.com/shirou/gopsutil/disk"
-)
+import "github.com/shirou/gopsutil/load"
 
 type Memory struct {
 	Total uint64 `json:"total"`
@@ -10,9 +8,8 @@ type Memory struct {
 }
 
 type Result struct {
-	Swap          *Memory                        `json:"Swap"`
-	Memory        *Memory                        `json:"Memory"`
-	Cpu           []float64                      `json:"Cpu"`
-	PartitionStat []disk.PartitionStat           `json:"PartitionStat"`
-	IOCounter     map[string]disk.IOCountersStat `json:"IOCounter"`
+	Swap    *Memory       `json:"Swap"`
+	Memory  *Memory       `json:"Memory"`
+	Cpu     []float64     `json:"Cpu"`
+	LoadAvg *load.AvgStat `json:"LoadAVG"`
 }
