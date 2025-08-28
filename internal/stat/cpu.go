@@ -1,8 +1,12 @@
 package stat
 
-import "github.com/shirou/gopsutil/cpu"
+import (
+	"time"
 
-func Usage(t1, t2 *cpu.TimesStat) float64 {
+	"github.com/shirou/gopsutil/cpu"
+)
+
+func coreLoad(t1, t2 *cpu.TimesStat) float64 {
 	idle1 := t1.Idle + t1.Iowait
 	idle2 := t2.Idle + t2.Iowait
 
@@ -16,4 +20,26 @@ func Usage(t1, t2 *cpu.TimesStat) float64 {
 	idled := idle2 - idle1
 
 	return (totald - idled) / totald * 100
+}
+
+func CpuLoad(duration int64) ([]float64, error) {
+	var usage []float64
+
+	t1, err := cpu.Times(true)
+	if err != nil {
+		return nil, err
+	}
+
+	time.Sleep((time.Second * time.Duration(duration)))
+
+	t2, err := cpu.Times(true)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range len(t1) {
+		usage = append(usage, coreLoad(&t1[i], &t2[i]))
+	}
+
+	return usage, nil
 }

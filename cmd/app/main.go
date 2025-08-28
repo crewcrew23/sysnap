@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 
@@ -45,17 +44,11 @@ func main() {
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			once := cmd.Bool("once")
-			interval := cmd.Int64("interval")
+			// once := cmd.Bool("once")
+			// interval := cmd.Int64("interval")
 			duration := cmd.Int64("duration")
-			workTime := cmd.Int64("work-time")
+			// workTime := cmd.Int64("work-time")
 			output := cmd.String("output")
-
-			fmt.Println("Once", once)
-			fmt.Println("interval", interval)
-			fmt.Println("duration", duration)
-			fmt.Println("workTime", workTime)
-			fmt.Println("output", output)
 
 			err := startup.RunOnce(output, duration)
 			return err
