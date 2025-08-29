@@ -36,21 +36,14 @@ func main() {
 				Usage:   "path for output file",
 				Value:   "sysnap-result.json",
 			},
-			&cli.Int64Flag{
-				Name:    "duration",
-				Aliases: []string{"d"},
-				Usage:   "duration for once snapshot",
-				Value:   5,
-			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			// once := cmd.Bool("once")
-			// interval := cmd.Int64("interval")
-			duration := cmd.Int64("duration")
+			interval := cmd.Int64("interval")
 			// workTime := cmd.Int64("work-time")
 			output := cmd.String("output")
 
-			err := startup.RunOnce(output, duration)
+			err := startup.RunOnce(output, interval)
 			return err
 		},
 	}
