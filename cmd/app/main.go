@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
@@ -36,14 +37,22 @@ func main() {
 				Usage:   "path for output file",
 				Value:   "sysnap-result.json",
 			},
+			&cli.StringSliceFlag{
+				Name:    "disk",
+				Aliases: []string{"d"},
+				Usage:   "array of disks path",
+				Value:   []string{""},
+			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			// once := cmd.Bool("once")
 			interval := cmd.Int64("interval")
 			// workTime := cmd.Int64("work-time")
 			output := cmd.String("output")
+			disks := cmd.StringSlice("disk")
 
-			err := startup.RunOnce(output, interval)
+			fmt.Println(disks)
+			err := startup.RunOnce(output, disks, interval)
 			return err
 		},
 	}

@@ -1,11 +1,13 @@
 package stat
 
 import (
+	"fmt"
 	"os"
 	"time"
 
 	"github.com/crewcrew23/sysnap/internal/structs/result"
 	"github.com/shirou/gopsutil/cpu"
+	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/load"
 	"github.com/shirou/gopsutil/mem"
@@ -234,7 +236,40 @@ func Uptime() (*result.Uptime, error) {
 	return upt, nil
 }
 
-func GatherAll(file *os.File, duration int64) (*result.Result, error) {
+func diskUsage(disks []string) ([]result.DiskWrapper, error) {
+	if disks[0] == "" {
+		return []result.DiskWrapper{}, nil
+	}
+
+	disksWrp := make([]result.DiskWrapper, 0, len(disks))
+	var scopeErr error
+
+	for _, v := range disks {
+		disk, err := disk.Usage(v)
+		if err != nil {
+			scopeErr = fmt.Errorf("%s", err.Error())
+			break
+		}
+
+		disksWrp = append(disksWrp, result.DiskWrapper{
+			Path: v,
+			Data: &result.Disk{
+				Total:        disk.Total / 1024 / 1024,
+				Usge:         disk.Used / 1024 / 1024,
+				UsagePercent: disk.UsedPercent,
+				Free:         disk.Free / 1024 / 1024,
+			},
+		})
+	}
+
+	if scopeErr != nil {
+		return nil, scopeErr
+	}
+
+	return disksWrp, nil
+}
+
+func GatherAll(file *os.File, disks []string, duration int64) (*result.Result, error) {
 	cpuUsage, err := CpuLoad(duration)
 	if err != nil {
 		return nil, err
@@ -260,12 +295,18 @@ func GatherAll(file *os.File, duration int64) (*result.Result, error) {
 		return nil, err
 	}
 
+	disk, err := diskUsage(disks)
+	if err != nil {
+		return nil, err
+	}
+
 	result := result.Result{
 		Cpu:     cpuUsage,
 		Memory:  memUsage,
 		Swap:    swapUsage,
 		LoadAvg: loadAVG,
 		Uptime:  uptime,
+		Disks:   disk,
 	}
 
 	return &result, nil

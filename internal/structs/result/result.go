@@ -30,10 +30,23 @@ type CPU struct {
 	IoWait       float64   `json:"iowait"`
 }
 
+type Disk struct {
+	Total        uint64  `json:"total"`
+	Usge         uint64  `json:"usge"`
+	UsagePercent float64 `json:"usagePercent"`
+	Free         uint64  `json:"free"`
+}
+
+type DiskWrapper struct {
+	Path string `json:"path"`
+	Data *Disk  `json:"data"`
+}
+
 type Result struct {
 	Swap    *Swap         `json:"Swap"`
 	Memory  *Memory       `json:"Memory"`
 	Cpu     *CPU          `json:"Cpu"`
 	LoadAvg *load.AvgStat `json:"LoadAVG"`
+	Disks   []DiskWrapper `json:"disks"`
 	Uptime  *Uptime       `json:"Uptime"`
 }

@@ -8,10 +8,10 @@ import (
 	"github.com/crewcrew23/sysnap/internal/stat"
 )
 
-func Run(file *os.File, duration int64) error {
+func Run(file *os.File, disks []string, duration int64) error {
 	log.Println("Start Once")
 
-	result, err := stat.GatherAll(file, duration)
+	result, err := stat.GatherAll(file, disks, duration)
 	if err != nil {
 		return err
 	}
